@@ -1,14 +1,9 @@
 # BUILD
-FROM node:18-alpine as build-stage
+FROM node:22-alpine as build-stage
 WORKDIR /app
+
 COPY package.json yarn.lock ./
 RUN yarn --frozen-lockfile
-
-RUN yarn install \
-  --prefer-offline \
-  --frozen-lockfile \
-  --non-interactive \
-  --production=false
 
 COPY --chown=node:node . .
 RUN yarn build
@@ -21,11 +16,18 @@ RUN rm -rf node_modules && \
   --production=true
 
 # STARTER
-FROM node:18-alpine
+FROM node:22-alpine
 ENV NODE_ENV production
 WORKDIR /app
 
-COPY --from=build-stage /app .
+COPY --from=build-stage --chown=node:node /app/dist ./dist
+COPY --from=build-stage --chown=node:node /app/node_modules ./node_modules
+COPY --from=build-stage --chown=node:node /app/package.json ./
+COPY --from=build-stage --chown=node:node /app/public ./public
+COPY --from=build-stage --chown=node:node /app/seeders ./seeders
+COPY --from=build-stage --chown=node:node /app/migrations ./migrations
+COPY --from=build-stage --chown=node:node /app/docker ./docker
+COPY --from=build-stage --chown=node:node /app/.sequelizerc ./
 
 EXPOSE 8000
 

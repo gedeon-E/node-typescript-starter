@@ -36,6 +36,7 @@ https://github.com/auth0/node-jsonwebtoken#readme
 1. Add environnement variables `cp .env.example .env`
 2. Update variables in `.env` file
 3. Update ***JWT_SECRET*** key in ***.env***
+### you can generate new `JWT_SECRET` on https://jwtsecretkeygenerator.com/
 4. Install dependencies: `yarn install`
 5. Build TS to JS: `yarn build`
 6. Run migrations: `yarn sequelize-cli db:migrate`
@@ -43,9 +44,9 @@ https://github.com/auth0/node-jsonwebtoken#readme
 
 ## Run development server
 
-Serve with hot reload at http://localhost:port/ : `yarn dev`
+Serve with hot reload at http://localhost:[port]/ : `yarn dev`
 
-Api will runing on  http://localhost:port/api
+Api will runing on  http://localhost:[port]/api
 
 ## Run production server
 
@@ -74,4 +75,4 @@ With Docker compose
 
 - Stop the containers `docker compose down`
 
-- Rebuild the containers `docker compose build`
+- Rebuild images and run containers `docker compose up -d --build`
