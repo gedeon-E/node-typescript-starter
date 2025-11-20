@@ -111,14 +111,16 @@ const AuthService = {
       throw new AuthTokenBlacklistedError('Session expirée, veuillez vous reconnecter !');
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       jwt.verify(token, process.env.JWT_SECRET, async (err: null, decoded: TokenDecodedI) => {
         if (err) {
-          throw new AuthInvalidTokenError('Veuillez vous connectez !');
+          reject(new AuthInvalidTokenError('Veuillez vous connectez !'));
+          return;
         }
 
         if (!decoded.type || decoded.type !== TokenTypeE.LOGIN_TOKEN) {
-          throw new AuthInvalidTokenError('Token invalid');
+          reject(new AuthInvalidTokenError('Token invalid'));
+          return;
         }
 
         const user = await User
@@ -127,9 +129,9 @@ const AuthService = {
           });
 
         if (!user) {
-          throw new AuthUserNotFoundError('Veuillez vous connectez !');
+          reject(new AuthUserNotFoundError('Veuillez vous connectez !'));
         } else if (user.locked) {
-          throw new AuthUserLockedError('Votre compte est bloqué, veuillez contacter l\'administrateur !');
+          reject(new AuthUserLockedError('Votre compte est bloqué, veuillez contacter l\'administrateur !'));
         } else {
           resolve(user);
         }
